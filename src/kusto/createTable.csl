@@ -1,0 +1,7 @@
+// https://docs.microsoft.com/en-us/azure/data-explorer/ingest-data-event-hub#create-a-target-table-in-azure-data-explorer
+
+// Create
+.create table TravelTimes (TravelTimeID: int, Name: string, Description: string, TimeUpdated: datetime, Distance: double, AverageTime: int, CurrentTime: int)
+
+// Create Ingestion Mapping
+.create table TravelTimes ingestion json mapping 'TravelTimeMapping' '[{"column":"TravelTimeID", "path":"$.TravelTimeID", "datatype":"int"},{"column":"Name", "path":"$.Name", "datatype":"string"},{"column":"Description", "path":"$.Description", "datatype":"string"},{"column":"TimeUpdated", "path":"$.TimeUpdated", "datatype":"datetime"},{"column":"Distance", "path":"$.Distance", "datatype":"double"},{"column":"AverageTime", "path":"$.AverageTime", "datatype":"int"},{"column":"CurrentTime", "path":"$.CurrentTime", "datatype":"int"}]'
