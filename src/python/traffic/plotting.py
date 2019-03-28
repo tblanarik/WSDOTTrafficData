@@ -7,6 +7,7 @@ import pandas
 
 def canvas_from_data(df, local_tz='US/Pacific'):
     local_zone = dateutil.tz.gettz(local_tz)
+    df = df.reset_index()
     name = df['Description'][0].strip()
     fig=Figure()
     ax=fig.add_subplot(111)

@@ -49,8 +49,12 @@ def get_travel_times(tid, startdate='1970-01-01', enddate='3000-01-01', local_tz
     with pyodbc.connect(connection_string) as conn:
         df = pandas.read_sql_query(query, conn)
     df['TimeUpdated'] = df['TimeUpdated'].dt.tz_localize(from_zone).dt.tz_convert(to_zone)
-    return df.set_index(pandas.DatetimeIndex(df['TimeUpdated'])).sort_values(by=['TimeUpdated'])
+    return df.sort_values(by=['TimeUpdated'])
 
+def query(query):
+    with pyodbc.connect(connection_string) as conn:
+        df = pandas.read_sql_query(query, conn)
+    return df
 
 def get_daily_row_count():
     """
@@ -58,4 +62,4 @@ def get_daily_row_count():
     Returns a count of the number of rows in the table, by day.
     """
     pass
-    #query = "SELECT TimeUpdated,CurrentTime,Description FROM TravelTimes".format(tid, startdate, enddate)
+    #query = "SELECT TimeUpdated,CurrentTime,Description FROM TravelTimes".format(tid, startdate, enddate)    
