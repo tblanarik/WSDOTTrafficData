@@ -3,6 +3,7 @@ import dateutil
 import pandas
 import pyodbc
 from traffic.tconfig import db_config
+from traffic.table import TrafficTable
 
 connection_string = ('Driver={{ODBC Driver 13 for SQL Server}};'
                      'Server=tcp:{server};'
@@ -30,13 +31,13 @@ def _format_date_as_string(dt, local_tz):
         return dt.strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def get_travel_times(tid, startdate='1970-01-01', enddate='3000-01-01', local_tz = 'US/Pacific'):
+def get_travel_times(tids, startdate='1970-01-01', enddate='3000-01-01', local_tz = 'US/Pacific'):
     """Get the travel times for a route between given times
     Returns a Pandas DataFrame. The TimeUpdated field will be converted to the timezone specified
     in local_tz.
     The startdate and enddate fields are assumed to be in the same timezone as local_tz
 
-    tid - TravelTimeID, the ID in the WSDOT API for the desired route
+    tids - Sequence of TravelTimeIDs (from the WSDOT API) for the desired route
     startdate - a string or datetime object, assumed to be in the same tz as local_tz, specifying the lower bound (inclusive) for the query
     enddate - a string or datetime object, assumed to be in the same tz as local_tz, specifying the upper bound (inclusive) for the query
     """
@@ -44,12 +45,13 @@ def get_travel_times(tid, startdate='1970-01-01', enddate='3000-01-01', local_tz
     to_zone = dateutil.tz.gettz(local_tz)
     startdate = _format_date_as_string(startdate, local_tz)
     enddate = _format_date_as_string(enddate, local_tz)
+    tid_seq = ','.join([str(n) for n in tids])
 
-    query = "SELECT TimeUpdated,CurrentTime,Description FROM TravelTimes WHERE TRAVELTIMEID = {0} AND TIMEUPDATED BETWEEN '{1}' AND '{2}'".format(tid, startdate, enddate)
+    query = "SELECT * FROM TravelTimes WHERE TRAVELTIMEID in ({0}) AND TIMEUPDATED BETWEEN '{1}' AND '{2}'".format(tid_seq, startdate, enddate)
     with pyodbc.connect(connection_string) as conn:
         df = pandas.read_sql_query(query, conn)
     df['TimeUpdated'] = df['TimeUpdated'].dt.tz_localize(from_zone).dt.tz_convert(to_zone)
-    return df.sort_values(by=['TimeUpdated'])
+    return TrafficTable(df.sort_values(by=['TimeUpdated']))
 
 def query(query):
     with pyodbc.connect(connection_string) as conn:
