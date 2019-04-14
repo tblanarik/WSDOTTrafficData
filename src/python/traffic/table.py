@@ -1,5 +1,4 @@
 import pandas
-from enum import Enum
 
 class TrafficTable(pandas.DataFrame):
     @property
