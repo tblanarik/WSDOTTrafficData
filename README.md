@@ -9,6 +9,10 @@ Some of the longterm goals of the project:
 - be able to predict the evening commute hours in advance (eg: this evening's commute will be better or worse than average)
 - look for trends over time on the different routes in the region
 
+## Plots
+Jump straight to the plots here:
+[TrafficDataViewer](src/python/jupyter/TrafficDataViewer.ipynb)
+
 ## Data
 - WSDOT API: http://wsdot.com/traffic/api/ 
 
@@ -31,14 +35,11 @@ A Jupyter Notebook for viewing plots of the data
 Some Python modules for getting data from the DB
 
 ### DataArchiver
-**DEPRECATING**
 
 `/src/dotnet/DataArchiver`
 
-~~This is an Azure Function App dedicated to retrieving the current travel times from the WSDOT Travel Times API every 20 minutes.~~
-~~It stores the data in a SQL table, also in Azure.~~
-
-I'm deprecating this code because it's more complicated than I need right now, deals with SQL rather than Kusto, and is based on Function Apps V1 instead of V2.
+This is an Azure Function App dedicated to retrieving the current travel times from the WSDOT Travel Times API every 20 minutes.
+It stores the data in a SQL table, also in Azure.
 
 ## Setup
 #### Requirements
@@ -46,6 +47,7 @@ I'm deprecating this code because it's more complicated than I need right now, d
 - pyodbc
 - pandas
 - matplotlib
+- seaborn
 - configparser
 
 Create config file: `TrafficData/_private/db.config`
